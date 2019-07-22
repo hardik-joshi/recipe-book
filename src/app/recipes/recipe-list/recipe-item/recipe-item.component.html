@@ -1,5 +1,5 @@
 <div class="col-4 pt-15">
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem;" (click)="onSelected()">
         <img class="card-img-top" [src]="recipe.imagePath" [alt]="recipe.name" style="max-height: 250px;"
             data-toggle="tooltip" data-placement="top" [title]="recipe.name">
         <div class="card-body">

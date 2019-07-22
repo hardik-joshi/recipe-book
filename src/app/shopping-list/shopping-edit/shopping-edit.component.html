@@ -1,0 +1,31 @@
+<form>
+    <div class="form-row align-items-center">
+        <div class="col-md-6">
+            <label class="sr-only" for="inlineFormInput">Name</label>
+            <input 
+                type="text" 
+                class="form-control mb-2" 
+                id="ingredientName" 
+                #nameInput 
+                placeholder="Ingredient Name">
+        </div>
+        <div class="col-md-3">
+            <label class="sr-only" for="inlineFormInputGroup">Username</label>
+            <input 
+                type="text" 
+                class="form-control mb-2" 
+                id="ingredientAmount" 
+                #amountInput 
+                placeholder="Amount">
+        </div>
+        <div class="col-md-1">
+            <i class="material-icons" (click)="onAddIngredient()">add</i>
+        </div>
+        <div class="col-md-1">
+            <i class="material-icons">delete</i>
+        </div>
+        <div class="col-md-1">
+            <i class="material-icons">clear</i>
+        </div>
+    </div>
+</form>
