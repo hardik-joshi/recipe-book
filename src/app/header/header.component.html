@@ -11,6 +11,15 @@
         <li class="nav-item">
           <a class="nav-link" href="#" (click)="onSelect('shopping-list')">Shopping List</a>
         </li>
+        <li class="nav-item dropdown" appDropdown>
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" aria-haspopup="true" aria-expanded="false">
+            Manage
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="#">Fetch Data</a>
+            <a class="dropdown-item" href="#">Save Data</a>
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
