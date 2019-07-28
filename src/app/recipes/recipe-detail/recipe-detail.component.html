@@ -1,34 +1,41 @@
-<div class="row">
+<div class="row pt-15">
     <div class="col-sm-12">
-        <ul class="list-group mb-3 pt-15">
-            <li class="list-group-item d-flex justify-content-between lh-condensed">
-                <div>
-                    <h6 class="my-0">{{recipe.name}}</h6>
-                    <small class="text-muted">{{recipe.description}}</small>
+        <div class="row card-group d-flex align-items-stretch">
+            <div class="card">
+                <img class="card-img-top" [src]="recipe.imagePath" [alt]="recipe.name" style="max-height: 250px;"
+                    data-toggle="tooltip" data-placement="top" [title]="recipe.name">
+                <div class="card-body">
+                    <h5 class="card-title text-truncate" data-toggle="tooltip" data-placement="bottom"
+                        [title]="recipe.name">
+                        {{ recipe.name }}</h5>
+                    <p class="card-text" data-toggle="tooltip" data-placement="bottom"
+                        [title]="recipe.description">
+                        {{ recipe.description }}</p>
                 </div>
-                <span class="text-muted"><img [src]="recipe.imagePath" style="max-height: 70px; max-width: 100px;"/></span>
-            </li>
-        </ul>
-    </div>    
+            </div>
+        </div>
+    </div>
 </div>
-<div class="row">
+
+<div class="row pt-15">
     <div class="col-sm-12">
         <div class="dropdown" appDropdown>
             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton">
-              Manage Recipe
+                Manage Recipe
             </button>
             <div class="dropdown-menu" appDropdown>
-              <a class="dropdown-item" href="#">To Shopping List</a>
-              <a class="dropdown-item" href="#">Edit Recipe</a>
-              <a class="dropdown-item" href="#">Delete Recipe</a>
+                <a class="dropdown-item" href="#">To Shopping List</a>
+                <a class="dropdown-item" href="#">Edit Recipe</a>
+                <a class="dropdown-item" href="#">Delete Recipe</a>
             </div>
         </div>
     </div>
 </div>
 <div class="row pt-15">
-    <div class="col-sm-5">
+    <div class="col-sm-12">
         <ul class="list-group">
-            <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">{{ ingredient.name }} ({{ ingredient.amount }})</li>
+            <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">{{ ingredient.name }}
+                ({{ ingredient.amount }})</li>
         </ul>
     </div>
 </div>

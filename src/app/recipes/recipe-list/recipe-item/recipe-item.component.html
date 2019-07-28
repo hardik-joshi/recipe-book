@@ -1,13 +1,7 @@
-<div class="col-4 pt-15">
-    <div class="card" style="width: 18rem;" (click)="onSelected()">
-        <img class="card-img-top" [src]="recipe.imagePath" [alt]="recipe.name" style="max-height: 250px;"
-            data-toggle="tooltip" data-placement="top" [title]="recipe.name">
-        <div class="card-body">
-            <h5 class="card-title text-truncate" data-toggle="tooltip" data-placement="bottom" [title]="recipe.name">
-                {{ recipe.name }}</h5>
-            <p class="card-text text-truncate" data-toggle="tooltip" data-placement="bottom"
-                [title]="recipe.description">
-                {{ recipe.description }}</p>
-        </div>
+<li class="list-group-item d-flex justify-content-between lh-condensed" (click)="onSelected()" style="cursor: pointer">
+    <div class="text-truncate" style="max-width: 33rem;">
+        <h6 class="my-0">{{recipe.name}}</h6>
+        <small class="text-muted">{{recipe.description}}</small>
     </div>
-</div>
+    <span class="text-muted"><img [src]="recipe.imagePath" style="max-height: 50px; max-width: 100px;" /></span>
+</li>
