@@ -1,3 +1,13 @@
-<ul class="list-group mb-3 pt-15">
-    <app-recipe-item *ngFor="let recipeElement of recipes" [recipe]="recipeElement"></app-recipe-item>
-</ul>
+<div class="row pt-15">
+    <div class="col-sm-12">
+        <button type="button" class="btn btn-success" (click)="onNewRecipe()">New Recipe</button>
+    </div>
+</div>
+<div class="row pt-15">
+    <div class="col-sm-12">
+        <ul class="list-group mb-3 ">
+            <app-recipe-item *ngFor="let recipeElement of recipes; let i = index" [recipe]="recipeElement" [index]="i">
+            </app-recipe-item>
+        </ul>
+    </div>
+</div>
