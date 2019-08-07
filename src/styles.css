@@ -4,3 +4,7 @@
 .pt-15 {
     padding-top: 15px;
 }
+
+div > i.material-icons {
+    cursor: pointer;
+}

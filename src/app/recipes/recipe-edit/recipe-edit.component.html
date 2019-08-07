@@ -1,2 +1,44 @@
-<p class="pt-15" *ngIf="editMode">recipe-edit works!</p>
-<p class="pt-15" *ngIf="!editMode">recipe-new works!</p>
+<div class="row mt-3">
+    <div class="col-sm-12">
+        <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <button type="submit" class="btn btn-success" [disabled]="!recipeForm.valid">Save</button>
+                <button type="button" class="btn btn-danger ml-2" (click)="onCancel()">Cancel</button>
+            </div>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" formControlName="name" placeholder="Recipe Name">
+            </div>
+            <div class="form-group">
+                <label for="imageUrl">Image Url</label>
+                <input type="text" class="form-control" id="imageUrl" formControlName="imagePath" #imagePath
+                    placeholder="Image URL">
+            </div>
+            <div class="form-group" *ngIf="imagePath.value">
+                <img [src]="imagePath.value" class="img-responsive form-control" style="max-width: 450px; height: 250px;">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" name="description" id="description" formControlName="description"
+                    rows="6"></textarea>
+            </div>
+            <div class="form-group" formArrayName="ingredients">
+                <label for="ingredient">Ingredients</label>
+                <div class="form-row pt-2"
+                    *ngFor="let ingredientCtrl of recipeForm.get('ingredients').controls; let i = index"
+                    [formGroupName]="i" [ngClass]="{'pt-2': i > 0}">
+                    <div class="col-8">
+                        <input type="text" class="form-control" formControlName="name" placeholder="Ingredient Name">
+                    </div>
+                    <div class="col-3">
+                        <input type="text" class="form-control" formControlName="amount" placeholder="Amount">
+                    </div>
+                    <div class="col-1"><i class="material-icons mt-2" (click)="onDeleteIngredient(i)">clear</i></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-success" (click)="onAddIngredient()" type="button">Add Ingredient</button>
+            </div>
+        </form>
+    </div>
+</div>
