@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Ingredient } from '../shared/ingredient.model';
-import { ShoppingListService } from './shopping-list.service';
+import {Component, OnInit} from '@angular/core';
+import {Ingredient} from '../shared/ingredient.model';
+import {ShoppingListService} from './shopping-list.service';
 
 @Component({
   selector: 'app-shopping-list',
@@ -9,7 +9,9 @@ import { ShoppingListService } from './shopping-list.service';
 })
 export class ShoppingListComponent implements OnInit {
   ingredients: Ingredient[];
-  constructor(private shoppingListService: ShoppingListService) { }
+
+  constructor(private shoppingListService: ShoppingListService) {
+  }
 
   ngOnInit() {
     this.ingredients = this.shoppingListService.getShoppingList();
@@ -18,5 +20,9 @@ export class ShoppingListComponent implements OnInit {
         this.ingredients = ingredients;
       }
     );
+  }
+
+  onEditIngredient(index: number) {
+    this.shoppingListService.startedEditing.next(index);
   }
 }

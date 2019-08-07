@@ -6,7 +6,9 @@
 <div class="row pt-15">
     <div class="col-sm-5">
         <ul class="list-group">
-            <li class="list-group-item" *ngFor="let ingredient of ingredients">{{ ingredient.name }} ({{ ingredient.amount }})</li>
+            <li class="list-group-item" *ngFor="let ingredient of ingredients; let i = index" (click)="onEditIngredient(i)">
+              {{ ingredient.name }} ({{ ingredient.amount }})
+            </li>
         </ul>
     </div>
 </div>
