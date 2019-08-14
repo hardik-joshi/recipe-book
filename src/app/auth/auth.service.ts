@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { throwError, BehaviorSubject } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { User } from './user.model';
 
 export interface AuthResponseData {
     idToken: string;
@@ -12,41 +13,64 @@ export interface AuthResponseData {
     registered?: boolean;
 }
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-    constructor(private http: HttpClient) {}
+    user = new BehaviorSubject<User>(null);
+
+    constructor(private http: HttpClient) { }
 
     signup(email: string, password: string) {
-        return this.http.post<AuthResponseData>(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBOb0VwIBuH_IWOhQLaOx-2okt0-m68Hec',
-            {
-                email: email,
-                password: password,
-                returnSecureToken: true
-            }
-        ).pipe(
-            catchError(errorRes => {
-                let errorMessage = 'An unknown error occurred!';
-                if(!errorRes.error || !errorRes.error.error) {
-                    return throwError(errorMessage);
+        return this.http
+            .post<AuthResponseData>(
+                'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBOb0VwIBuH_IWOhQLaOx-2okt0-m68Hec',
+                {
+                    email: email,
+                    password: password,
+                    returnSecureToken: true
                 }
-                switch (errorRes.error.error.message) {
-                    case 'EMAIL_EXISTS':
-                        errorMessage = 'This email already exist!';
-                }
-                return throwError(errorMessage);
-            })
-        );
+            )
+            .pipe(catchError(this.handleError), tap(resData => {
+                this.handleAuthentication(resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+            }));
     }
 
     login(email: string, password: string) {
-        return this.http.post<AuthResponseData>(
-            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBOb0VwIBuH_IWOhQLaOx-2okt0-m68Hec',
-            {
-                email: email,
-                password: password,
-                returnSecureToken: true
-            }
-        );
+        return this.http
+            .post<AuthResponseData>(
+                'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBOb0VwIBuH_IWOhQLaOx-2okt0-m68Hec',
+                {
+                    email: email,
+                    password: password,
+                    returnSecureToken: true
+                }
+            )
+            .pipe(catchError(this.handleError), tap(resData => {
+                this.handleAuthentication(resData.email, resData.localId, resData.idToken, +resData.expiresIn);
+            }));
+    }
+
+    handleAuthentication(email: string, userId: string, token: string, expiresIn: number) {
+        const tokenExpirationDate = new Date(new Date().getTime() + (expiresIn * 1000));
+        const user = new User(email, userId, token, tokenExpirationDate);
+        this.user.next(user);
+    }
+
+    handleError(errorRes: HttpErrorResponse) {
+        let errorMessage = 'An unknown error occurred!';
+        if (!errorRes.error || !errorRes.error.error) {
+            return throwError(errorMessage);
+        }
+        switch (errorRes.error.error.message) {
+            case 'EMAIL_EXISTS':
+                errorMessage = 'This email already exist!';
+                break;
+            case 'INVALID_PASSWORD':
+                errorMessage = 'This password is not correct.';
+                break;
+            case 'EMAIL_NOT_FOUND':
+                errorMessage = 'This email is not correct.';
+                break;
+        }
+        return throwError(errorMessage);
     }
 }
