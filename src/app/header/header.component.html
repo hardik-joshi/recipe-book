@@ -33,7 +33,7 @@
         </div>
       </li>
       <li class="nav-item">
-        <a class="nav-link" style="cursor: pointer;" *ngIf="isAuthentication">Sign Out</a>
+        <a class="nav-link" style="cursor: pointer;" *ngIf="isAuthentication" (click)="onLogout()">Logout</a>
       </li>
     </ul>
   </div>
