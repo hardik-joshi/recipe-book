@@ -17,15 +17,45 @@ export interface AuthResponseData {
     registered?: boolean;
 }
 
+const handleAuthentication = (email: string, userId: string, token: string, expiresIn: number) => {
+    const tokenExpirationDate = new Date(new Date().getTime() + (expiresIn * 1000));
+    return new AuthActions.AuthenticateSuccess({
+        email: email,
+        userId: userId,
+        token: token,
+        expirationDate: tokenExpirationDate
+    });
+}
+
+const handleError = (errorRes: any) => {
+    let errorMessage = 'An unknown error occurred!';
+    if (!errorRes.error || !errorRes.error.error) {
+        return of(new AuthActions.AuthenticateFailed(errorMessage));
+    }
+    switch (errorRes.error.error.message) {
+        case 'EMAIL_EXISTS':
+            errorMessage = 'This email already exist!';
+            break;
+        case 'INVALID_PASSWORD':
+            errorMessage = 'This password is not correct.';
+            break;
+        case 'EMAIL_NOT_FOUND':
+            errorMessage = 'This email is not correct.';
+            break;
+    }
+    return of(new AuthActions.AuthenticateFailed(errorMessage));
+}
+
 @Injectable()
 export class AuthEffects {
     @Effect()
-    authLogin = this.actions$.pipe(
-        ofType(AuthActions.LOGIN_START),
-        switchMap((authData: AuthActions.LoginStart) => {
+    authSignup = this.actions$.pipe(
+        ofType(AuthActions.SIGNUP_START),
+        switchMap((authData: AuthActions.SignupStart) => {
             return this.http
                 .post<AuthResponseData>(
-                    'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' + environment.firebaseAPIKey,
+                    'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' +
+                    environment.firebaseAPIKey,
                     {
                         email: authData.payload.email,
                         password: authData.payload.password,
@@ -33,34 +63,52 @@ export class AuthEffects {
                     }
                 ).pipe(
                     map(resData => {
-                        const tokenExpirationDate = new Date(new Date().getTime() + (+resData.expiresIn * 1000));
-                        return new AuthActions.Login({ email: resData.email, userId: resData.localId, token: resData.idToken, expirationDate: tokenExpirationDate });
+                        return handleAuthentication(
+                            resData.email,
+                            resData.localId,
+                            resData.idToken,
+                            +resData.expiresIn
+                        );
                     }),
                     catchError(errorRes => {
-                        let errorMessage = 'An unknown error occurred!';
-                        if (!errorRes.error || !errorRes.error.error) {
-                            return of(new AuthActions.LoginFail(errorMessage));
-                        }
-                        switch (errorRes.error.error.message) {
-                            case 'EMAIL_EXISTS':
-                                errorMessage = 'This email already exist!';
-                                break;
-                            case 'INVALID_PASSWORD':
-                                errorMessage = 'This password is not correct.';
-                                break;
-                            case 'EMAIL_NOT_FOUND':
-                                errorMessage = 'This email is not correct.';
-                                break;
-                        }
-                        return of(new AuthActions.LoginFail(errorMessage));
+                        return handleError(errorRes);
+                    })
+                )
+        })
+    );
+
+    @Effect()
+    authLogin = this.actions$.pipe(
+        ofType(AuthActions.LOGIN_START),
+        switchMap((authData: AuthActions.LoginStart) => {
+            return this.http
+                .post<AuthResponseData>(
+                    'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=' +
+                    environment.firebaseAPIKey,
+                    {
+                        email: authData.payload.email,
+                        password: authData.payload.password,
+                        returnSecureToken: true
+                    }
+                ).pipe(
+                    map(resData => {
+                        return handleAuthentication(
+                            resData.email,
+                            resData.localId,
+                            resData.idToken,
+                            +resData.expiresIn
+                        );
+                    }),
+                    catchError(errorRes => {
+                        return handleError(errorRes);
                     })
                 )
         })
     );
 
     @Effect({ dispatch: false })
-    authSuccess = this.actions$.pipe(
-        ofType(AuthActions.LOGIN),
+    authRedirect = this.actions$.pipe(
+        ofType(AuthActions.AUTHENTICATE_SUCCESS, AuthActions.LOGOUT),
         tap(() => {
             this.router.navigate(['/']);
         })
