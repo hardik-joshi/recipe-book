@@ -11,7 +11,7 @@ export const LOGOUT = '[Auth] Logout';
 export class AuthenticateSuccess implements Action {
     readonly type = AUTHENTICATE_SUCCESS;
 
-    constructor(public payload: { email: string, userId: string, token: string, expirationDate: Date }) { }
+    constructor(public payload: { email: string, userId: string, token: string, expirationDate: Date, redirect: boolean }) { }
 }
 
 export class Logout implements Action {
@@ -27,7 +27,7 @@ export class LoginStart implements Action {
 export class AuthenticateFailed implements Action {
     readonly type = AUTHENTICATE_FAILED;
 
-    constructor(public payload: string) {}
+    constructor(public payload: string) { }
 }
 
 export class SignupStart implements Action {
@@ -44,11 +44,11 @@ export class AutoLogin implements Action {
     readonly type = AUTO_LOGIN;
 }
 
-export type AuthActions = 
-    | AuthenticateSuccess 
-    | Logout 
-    | LoginStart 
-    | AuthenticateFailed 
-    | SignupStart 
+export type AuthActions =
+    | AuthenticateSuccess
+    | Logout
+    | LoginStart
+    | AuthenticateFailed
+    | SignupStart
     | ClearError
     | AutoLogin;
